@@ -1,16 +1,16 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectStories } from "./storiesSlice";
+import { selectDescendingStories } from "./storiesSlice";
 import ShowStory from "./components/ShowStory";
-import { fetchMaxItem } from "features/stories-list/storiesSlice";
+import {
+  fetchMaxItem,
+  fetchNextStory,
+  selectMaxItemId,
+} from "features/stories-list/storiesSlice";
 
 function StoriesList() {
-  const dispatch = useDispatch();
-  const stories = useSelector(selectStories);
-
-  React.useEffect(() => {
-    dispatch(fetchMaxItem());
-  }, [dispatch]);
+  const stories = useSelector(selectDescendingStories);
+  useNextStory();
 
   return (
     <ul>
@@ -22,3 +22,18 @@ function StoriesList() {
 }
 
 export default StoriesList;
+
+function useNextStory() {
+  const dispatch = useDispatch();
+  const maxItemId = useSelector(selectMaxItemId);
+
+  React.useEffect(() => {
+    dispatch(fetchMaxItem());
+  }, [dispatch]);
+
+  React.useEffect(() => {
+    if (maxItemId) {
+      dispatch(fetchNextStory());
+    }
+  }, [dispatch, maxItemId]);
+}

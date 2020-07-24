@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk, RootState } from "app/store";
 import { Story } from "models/story";
-import { getMaxItemId } from "data-sources/hacker-news";
+import { getMaxItemId, getStory } from "data-sources/hacker-news";
 
 interface StoriesState {
   /**
@@ -38,6 +38,9 @@ export const storiesSlice = createSlice({
     },
     setMaxItem: (state, action: PayloadAction<number>) => {
       state.maxItemId = action.payload;
+      if (state.currentItemId === null) {
+        state.currentItemId = action.payload;
+      }
     },
   },
 });
@@ -60,6 +63,51 @@ export function fetchMaxItem(): AppThunk {
   };
 }
 
-export function selectStories(state: RootState): Story[] {
-  return state.stories.stories;
+export function fetchNextStory(): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const oldestStoryId = selectOldestStoryId(state) || selectMaxItemId(state);
+    if (!oldestStoryId) {
+      console.warn(
+        "Attempted to fetch next story before max item ID was known"
+      );
+      return Promise.resolve();
+    }
+    let itemIdToTry: number = oldestStoryId;
+    let foundStory: boolean = false;
+    let attempts: number = 0;
+    const MAX_ATTEMPTS = 100000;
+
+    // To avoid infinite looping if something unexpected occurs, cap the number of attempts
+    // If we do not find a story after X attempts, simply give up trying
+    // In an ideal world, we would alert the user to what happened and have some recovery process
+    while (foundStory === false && attempts <= MAX_ATTEMPTS) {
+      const response = await getStory(itemIdToTry);
+      if (response.status === "ok") {
+        foundStory = true;
+        return dispatch(addStory(response.story));
+      }
+      itemIdToTry--;
+      attempts++;
+    }
+
+    console.warn(`Unable to find a story after ${MAX_ATTEMPTS}`);
+    return Promise.resolve();
+  };
+}
+
+export function selectDescendingStories(state: RootState): Story[] {
+  return [...state.stories.stories].sort((a, b) => b.id - a.id);
+}
+
+export function selectOldestStoryId(state: RootState): number | null {
+  const stories = selectDescendingStories(state);
+  if (stories.length < 1) {
+    return null;
+  }
+  return stories[stories.length - 1].id;
+}
+
+export function selectMaxItemId(state: RootState): number | null {
+  return state.stories.maxItemId;
 }
