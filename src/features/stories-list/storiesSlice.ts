@@ -13,10 +13,6 @@ interface StoriesState {
    */
   maxItemId: number | null;
   /**
-   * The next item to fetch
-   */
-  currentItemId: number | null;
-  /**
    * The current "page" for our infinite scroll
    */
   page: number;
@@ -25,7 +21,6 @@ interface StoriesState {
 const initialState: StoriesState = {
   stories: [],
   maxItemId: null,
-  currentItemId: null,
   page: 0,
 };
 
@@ -38,9 +33,6 @@ export const storiesSlice = createSlice({
     },
     setMaxItem: (state, action: PayloadAction<number>) => {
       state.maxItemId = action.payload;
-      if (state.currentItemId === null) {
-        state.currentItemId = action.payload;
-      }
     },
   },
 });
