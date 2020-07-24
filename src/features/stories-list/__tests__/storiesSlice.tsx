@@ -25,7 +25,7 @@ describe("#selectOldestStoryId", () => {
 function makeState(stories: Story[]) {
   return {
     counter: { value: 0 },
-    stories: { maxItemId: null, currentItemId: null, page: 0, stories },
+    stories: { maxItemId: null, page: 0, stories },
   };
 }
 
