@@ -7,3 +7,20 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/*
+ * Pulling in a design system or CSS framework seemed to heavy for this demo.
+ * So I just am throwing in some global classes here
+ */
+
+/*
+ * Card styling mostly taken from an example in the Tailwind card documentation
+ * https://tailwindcss.com/components/cards/
+ * However, for convenience I am throwing some padding on the card itself instead of the content
+ */
+.card {
+  border-radius: 0.375rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 1.75rem;
+}

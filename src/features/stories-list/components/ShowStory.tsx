@@ -3,11 +3,18 @@ import { Story } from "models/story";
 
 function ShowStory({ story }: StoryProps) {
   return (
-    <div>
-      <a href={story.url}>
-        <div dangerouslySetInnerHTML={{ __html: story.title }} />
-        <div>{story.by}</div>
-      </a>
+    <div className="card">
+      <a
+        href={story.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        dangerouslySetInnerHTML={{ __html: story.title }}
+      />
+      <br />
+      <br />
+      <div>
+        <i>{story.by}</i>
+      </div>
     </div>
   );
 }

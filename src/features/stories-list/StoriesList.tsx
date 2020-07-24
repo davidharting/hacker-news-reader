@@ -7,13 +7,14 @@ import {
   fetchNextStory,
   selectMaxItemId,
 } from "features/stories-list/storiesSlice";
+import styles from "./stories-list.module.css";
 
 function StoriesList() {
   const stories = useSelector(selectDescendingStories);
   useNextStory();
 
   return (
-    <ul>
+    <ul className={styles.list}>
       {stories.map((s) => (
         <ShowStory key={s.id} story={s} />
       ))}
