@@ -17,7 +17,9 @@ function StoriesList() {
   return (
     <ul className={styles.list}>
       {stories.map((s) => (
-        <ShowStory key={s.id} story={s} />
+        <li className={styles.listItem}>
+          <ShowStory key={s.id} story={s} />
+        </li>
       ))}
     </ul>
   );
