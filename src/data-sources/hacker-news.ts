@@ -49,7 +49,7 @@ type GetStoryResponse =
   | { status: "error"; message: string };
 
 function isStory(item: HackerNewsItem): boolean {
-  return item.type === "story";
+  return item.type === "story" && typeof item.url === "string";
 }
 
 function convertItemToStory(item: HackerNewsItem): Story {
