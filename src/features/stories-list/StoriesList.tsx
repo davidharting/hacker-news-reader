@@ -5,7 +5,8 @@ import ShowStory from "./components/ShowStory";
 import {
   fetchMaxItem,
   fetchNextStory,
-  selectMaxItemId,
+  selectCanFetch,
+  selectOldestStoryId,
 } from "features/stories-list/storiesSlice";
 import styles from "./stories-list.module.css";
 
@@ -26,15 +27,18 @@ export default StoriesList;
 
 function useNextStory() {
   const dispatch = useDispatch();
-  const maxItemId = useSelector(selectMaxItemId);
+  const stories = useSelector(selectDescendingStories);
+  const canFetch = useSelector(selectCanFetch);
+  const oldestStoryId = useSelector(selectOldestStoryId);
 
   React.useEffect(() => {
     dispatch(fetchMaxItem());
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (maxItemId) {
+    if (canFetch && stories.length < 10) {
       dispatch(fetchNextStory());
     }
-  }, [dispatch, maxItemId]);
+    // fetch next story if oldestStory id changes
+  }, [dispatch, canFetch, oldestStoryId]);
 }
