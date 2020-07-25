@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useScrolledToBottom } from "browser/window";
+import Spinner from "elements/spinner";
 import {
   fetchMaxItem,
   fetchNextStory,
@@ -30,7 +31,11 @@ function StoriesList({ pageSize }: StoriesListProps) {
           </li>
         ))}
       </ul>
-      {pageStatus === "INCOMPLETE" && <p>loading ...</p>}
+      {pageStatus === "INCOMPLETE" && (
+        <div className={styles.spinnerContainer}>
+          <Spinner />
+        </div>
+      )}
     </>
   );
 }

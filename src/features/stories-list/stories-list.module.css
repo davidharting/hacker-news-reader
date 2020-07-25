@@ -7,3 +7,8 @@
 .listItem {
   margin-bottom: 1rem;
 }
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+}
