@@ -37,6 +37,11 @@ export const storiesSlice = createSlice({
         state.page = state.page + 1;
       }
     },
+    refresh: (state) => {
+      state.maxItemId = initialState.maxItemId;
+      state.page = initialState.page;
+      state.stories = initialState.stories;
+    },
     setMaxItem: (state, action: PayloadAction<number>) => {
       state.maxItemId = action.payload;
     },
@@ -44,7 +49,7 @@ export const storiesSlice = createSlice({
 });
 
 const { setMaxItem } = storiesSlice.actions;
-export const { addStory, pageForward } = storiesSlice.actions;
+export const { addStory, pageForward, refresh } = storiesSlice.actions;
 export default storiesSlice.reducer;
 
 export function fetchMaxItem(): AppThunk {
@@ -80,7 +85,11 @@ export function fetchNextStory(): AppThunk {
     // To avoid infinite looping if something unexpected occurs, cap the number of attempts
     // If we do not find a story after X attempts, simply give up trying
     // In an ideal world, we would alert the user to what happened and have some recovery process
-    while (foundStory === false && attempts <= MAX_ATTEMPTS) {
+    while (
+      foundStory === false &&
+      attempts <= MAX_ATTEMPTS &&
+      navigator.onLine === true
+    ) {
       const response = await getStory(itemIdToTry);
       if (response.status === "ok") {
         foundStory = true;

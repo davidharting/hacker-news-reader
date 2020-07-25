@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNetworkStatus } from "browser/network";
 import { useScrolledToBottom } from "browser/window";
 import Spinner from "elements/spinner";
 import {
@@ -11,8 +12,10 @@ import {
   selectDescendingStories,
   pageForward,
   selectCurrentPageStatus,
+  selectMaxItemId,
 } from "./storiesSlice";
 import ShowStory from "./components/ShowStory";
+import Refresh from "./components/Refresh";
 import styles from "./stories-list.module.css";
 
 function StoriesList({ pageSize }: StoriesListProps) {
@@ -24,6 +27,7 @@ function StoriesList({ pageSize }: StoriesListProps) {
 
   return (
     <>
+      <Refresh />
       <ul className={styles.list}>
         {stories.map((s) => (
           <li className={styles.listItem} key={s.id}>
@@ -51,20 +55,35 @@ function useStoryPage(pageSize: number) {
   const stories = useSelector(selectDescendingStories);
   const canFetch = useSelector(selectCanFetch);
   const oldestStoryId = useSelector(selectOldestStoryId);
+  const maxItemId = useSelector(selectMaxItemId);
   const pageNumber = useSelector(selectPageNumber);
 
+  const networkStatus = useNetworkStatus();
   const scrolledToBottom = useScrolledToBottom();
 
   React.useEffect(() => {
-    dispatch(fetchMaxItem());
-  }, [dispatch]);
+    if (!maxItemId) {
+      dispatch(fetchMaxItem());
+    }
+  }, [dispatch, maxItemId]);
 
   React.useEffect(() => {
-    if (canFetch && stories.length < pageSize * (pageNumber + 1)) {
+    if (
+      networkStatus === "online" &&
+      canFetch &&
+      stories.length < pageSize * (pageNumber + 1)
+    ) {
       dispatch(fetchNextStory());
     }
-    // fetch next story if oldestStory id changes
-  }, [dispatch, canFetch, oldestStoryId, pageSize, stories.length, pageNumber]);
+  }, [
+    dispatch,
+    canFetch,
+    oldestStoryId,
+    networkStatus,
+    pageSize,
+    stories.length,
+    pageNumber,
+  ]);
 
   React.useEffect(() => {
     if (scrolledToBottom) {
