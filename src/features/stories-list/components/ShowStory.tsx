@@ -1,5 +1,6 @@
 import React from "react";
 import { Story } from "models/story";
+import styles from "./story.module.css";
 
 function ShowStory({ story }: StoryProps) {
   return (
@@ -12,8 +13,9 @@ function ShowStory({ story }: StoryProps) {
       />
       <br />
       <br />
-      <div>
+      <div className={styles.byline}>
         <i>{story.by}</i>
+        <span>{presentDate(story.time)}</span>
       </div>
     </div>
   );
@@ -24,3 +26,8 @@ interface StoryProps {
 }
 
 export default ShowStory;
+
+function presentDate(unixEpochSeconds: number): string {
+  const date = new Date(unixEpochSeconds * 1000);
+  return date.toLocaleString();
+}

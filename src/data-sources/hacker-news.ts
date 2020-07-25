@@ -65,6 +65,7 @@ function convertItemToStory(item: HackerNewsItem): Story {
     by: item.by,
     title: item.title,
     url: item.url,
+    time: item.time,
   };
 }
 

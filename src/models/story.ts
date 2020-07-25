@@ -3,4 +3,5 @@ export interface Story {
   by: string;
   title: string;
   url: string;
+  time: number;
 }
