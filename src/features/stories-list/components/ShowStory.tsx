@@ -14,7 +14,7 @@ function ShowStory({ story }: StoryProps) {
       <br />
       <br />
       <div className={styles.byline}>
-        <i>{story.by}</i>
+        <span>{story.by}</span>
         <span>{presentDate(story.time)}</span>
       </div>
     </div>
