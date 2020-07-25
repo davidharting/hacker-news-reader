@@ -11,7 +11,6 @@ import {
 import styles from "./stories-list.module.css";
 
 function StoriesList({ pageSize }: StoriesListProps) {
-  console.log("first render");
   const stories = useSelector(selectDescendingStories);
   useStoryPage(pageSize);
 
@@ -35,17 +34,13 @@ interface StoriesListProps {
 function useStoryPage(pageSize: number) {
   const dispatch = useDispatch();
   const stories = useSelector(selectDescendingStories);
-  const maxItemId = useSelector(selectMaxItemId);
-  console.log("maxitemid", maxItemId);
   const canFetch = useSelector(selectCanFetch);
   const oldestStoryId = useSelector(selectOldestStoryId);
-  console.log("oldest story ID");
 
   React.useEffect(() => {
     dispatch(fetchMaxItem());
   }, [dispatch]);
 
-  console.log(stories);
   React.useEffect(() => {
     if (canFetch && stories.length < pageSize) {
       dispatch(fetchNextStory());

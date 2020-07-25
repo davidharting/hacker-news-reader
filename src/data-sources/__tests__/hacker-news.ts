@@ -12,7 +12,6 @@ test("getMaxItemId should return 4342", async () => {
 
 test("getStory should return the story when one is found", async () => {
   const response = await getStory(4343);
-  console.log("response", response);
   if (response.status !== "ok") {
     throw new Error('Expected status to be "ok"');
   }
