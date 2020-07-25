@@ -11,8 +11,10 @@ import {
   selectDescendingStories,
   pageForward,
   selectCurrentPageStatus,
+  selectMaxItemId,
 } from "./storiesSlice";
 import ShowStory from "./components/ShowStory";
+import Refresh from "./components/Refresh";
 import styles from "./stories-list.module.css";
 
 function StoriesList({ pageSize }: StoriesListProps) {
@@ -24,6 +26,7 @@ function StoriesList({ pageSize }: StoriesListProps) {
 
   return (
     <>
+      <Refresh />
       <ul className={styles.list}>
         {stories.map((s) => (
           <li className={styles.listItem} key={s.id}>
@@ -51,13 +54,16 @@ function useStoryPage(pageSize: number) {
   const stories = useSelector(selectDescendingStories);
   const canFetch = useSelector(selectCanFetch);
   const oldestStoryId = useSelector(selectOldestStoryId);
+  const maxItemId = useSelector(selectMaxItemId);
   const pageNumber = useSelector(selectPageNumber);
 
   const scrolledToBottom = useScrolledToBottom();
 
   React.useEffect(() => {
-    dispatch(fetchMaxItem());
-  }, [dispatch]);
+    if (!maxItemId) {
+      dispatch(fetchMaxItem());
+    }
+  }, [dispatch, maxItemId]);
 
   React.useEffect(() => {
     if (canFetch && stories.length < pageSize * (pageNumber + 1)) {

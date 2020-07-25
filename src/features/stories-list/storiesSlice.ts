@@ -37,6 +37,11 @@ export const storiesSlice = createSlice({
         state.page = state.page + 1;
       }
     },
+    refresh: (state) => {
+      state.maxItemId = initialState.maxItemId;
+      state.page = initialState.page;
+      state.stories = initialState.stories;
+    },
     setMaxItem: (state, action: PayloadAction<number>) => {
       state.maxItemId = action.payload;
     },
@@ -44,7 +49,7 @@ export const storiesSlice = createSlice({
 });
 
 const { setMaxItem } = storiesSlice.actions;
-export const { addStory, pageForward } = storiesSlice.actions;
+export const { addStory, pageForward, refresh } = storiesSlice.actions;
 export default storiesSlice.reducer;
 
 export function fetchMaxItem(): AppThunk {
