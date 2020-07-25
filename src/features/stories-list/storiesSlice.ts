@@ -58,23 +58,27 @@ export function fetchMaxItem(): AppThunk {
 export function fetchNextStory(): AppThunk {
   return async (dispatch, getState) => {
     const state = getState();
-    const oldestStoryId = selectOldestStoryId(state) || selectMaxItemId(state);
-    if (!oldestStoryId) {
-      console.warn(
-        "Attempted to fetch next story before max item ID was known"
-      );
+    const maxItemId = selectMaxItemId(state);
+    const oldestStoryId = selectOldestStoryId(state);
+    let itemIdToTry: number | null = oldestStoryId
+      ? oldestStoryId - 1
+      : maxItemId;
+    if (!itemIdToTry) {
+      console.warn("Attempted to fetch without an item ID to start with");
       return Promise.resolve();
     }
-    let itemIdToTry: number = oldestStoryId - 1;
     let foundStory: boolean = false;
     let attempts: number = 0;
     const MAX_ATTEMPTS = 100000;
+
+    console.log("itemIdToTry", itemIdToTry);
 
     // To avoid infinite looping if something unexpected occurs, cap the number of attempts
     // If we do not find a story after X attempts, simply give up trying
     // In an ideal world, we would alert the user to what happened and have some recovery process
     while (foundStory === false && attempts <= MAX_ATTEMPTS) {
       const response = await getStory(itemIdToTry);
+      console.log(`response ${itemIdToTry}`, response);
       if (response.status === "ok") {
         foundStory = true;
         return dispatch(addStory(response.story));

@@ -1,24 +1,14 @@
 import React from "react";
 import { screen } from "@testing-library/react";
 import { render } from "test-utils";
-import { store } from "app/store";
-
 import StoriesList from "features/stories-list/StoriesList";
-import { addStory } from "features/stories-list/storiesSlice";
 
-test("renders a story", () => {
-  store.dispatch(
-    addStory({
-      id: 4,
-      by: "Bilbo",
-      title: "The Hobbit",
-      url:
-        "https://novel22.net/the-hobbit/-chapter-1-an-unexpected-party-128586.html",
-    })
-  );
+test("fetches and renders stories", async () => {
+  render(<StoriesList pageSize={2} />);
+  // Look at setupTests for the expected items
+  const firstStory = await screen.findByText(/escalation by tweet/i);
+  expect(firstStory).toBeInTheDocument();
 
-  render(<StoriesList />);
-  return screen.findByText(/the hobbit/i).then((node) => {
-    expect(node).toBeInTheDocument();
-  });
+  const secondStory = await screen.findByText(/citing anti-terror law/i);
+  expect(secondStory).toBeInTheDocument();
 });

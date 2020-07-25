@@ -5,9 +5,12 @@ export async function getMaxItemId(): Promise<ApiResponse<number>> {
     const response = await fetch(
       "https://hacker-news.firebaseio.com/v0/maxitem.json"
     );
-    const body = await response.text();
-    const maxItemId = parseInt(body, 10);
-    return { status: "ok", payload: maxItemId };
+    if (response.ok) {
+      const body = await response.text();
+      const maxItemId = parseInt(body, 10);
+      return { status: "ok", payload: maxItemId };
+    }
+    return { status: "error", message: "Not ok" };
   } catch (err) {
     return { status: "error", message: err.message };
   }
@@ -17,9 +20,8 @@ export async function getItem(
   itemId: number
 ): Promise<ApiResponse<HackerNewsItem | null>> {
   try {
-    const response = await fetch(
-      `https://hacker-news.firebaseio.com/v0/item/${itemId}.json`
-    );
+    const uri = `https://hacker-news.firebaseio.com/v0/item/${itemId}.json`;
+    const response = await fetch(uri);
     const item = await response.json();
     return { status: "ok", payload: item };
   } catch (err) {

@@ -4,6 +4,6 @@
   padding: 0;
 }
 
-.listItem + .listItem {
-  margin-top: 1rem;
+.listItem {
+  margin-bottom: 1rem;
 }

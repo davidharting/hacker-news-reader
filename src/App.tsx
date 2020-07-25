@@ -5,7 +5,7 @@ function App() {
   return (
     <div>
       <h1>Hacker News Reader</h1>
-      <StoriesList />
+      <StoriesList pageSize={12} />
     </div>
   );
 }
