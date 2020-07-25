@@ -6,6 +6,8 @@ import "@testing-library/jest-dom/extend-expect";
 import fetchMock from "jest-fetch-mock";
 
 // Do not hit the hackernews API during tests
+// This is definitely not a production grade approach for mocking the network for integration tests.
+// But for two endpoints, it will suffice.
 fetchMock.enableMocks();
 beforeAll(() => {
   // @ts-ignore
