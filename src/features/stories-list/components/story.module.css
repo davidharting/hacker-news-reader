@@ -1,0 +1,4 @@
+.byline {
+  display: flex;
+  justify-content: space-between;
+}

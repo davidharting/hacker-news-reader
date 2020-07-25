@@ -35,18 +35,21 @@ const STORIES = [
     by: "Mark",
     title: "An interesting title",
     url: "www.google.com",
+    time: 1595709837,
   },
   {
     id: 45,
     by: "Sally",
     title: "Whoa a cool article",
     url: "www.wikipedia.org",
+    time: 1595709802,
   },
-  { id: 27, by: "Luke", title: "Title", url: "website" },
+  { id: 27, by: "Luke", title: "Title", url: "website", time: 1595709693 },
   {
     id: 99,
     by: "Katie",
     title: "Nature is neat!",
     url: "https://www.pbs.org/show/nature/",
+    time: 1595709680,
   },
 ];
