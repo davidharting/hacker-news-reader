@@ -19,6 +19,18 @@ yarn test # watch mode
 yarn test:ci # run tests serially and exit
 ```
 
+## Lint
+
+```bash
+yarn lint
+```
+
+## Type check
+
+```bash
+yarn tsc
+```
+
 ## Create a production build
 
 ```
