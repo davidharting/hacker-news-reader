@@ -85,7 +85,11 @@ export function fetchNextStory(): AppThunk {
     // To avoid infinite looping if something unexpected occurs, cap the number of attempts
     // If we do not find a story after X attempts, simply give up trying
     // In an ideal world, we would alert the user to what happened and have some recovery process
-    while (foundStory === false && attempts <= MAX_ATTEMPTS) {
+    while (
+      foundStory === false &&
+      attempts <= MAX_ATTEMPTS &&
+      navigator.onLine === true
+    ) {
       const response = await getStory(itemIdToTry);
       if (response.status === "ok") {
         foundStory = true;

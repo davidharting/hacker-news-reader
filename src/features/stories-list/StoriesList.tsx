@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNetworkStatus } from "browser/network";
 import { useScrolledToBottom } from "browser/window";
 import Spinner from "elements/spinner";
 import {
@@ -57,6 +58,7 @@ function useStoryPage(pageSize: number) {
   const maxItemId = useSelector(selectMaxItemId);
   const pageNumber = useSelector(selectPageNumber);
 
+  const networkStatus = useNetworkStatus();
   const scrolledToBottom = useScrolledToBottom();
 
   React.useEffect(() => {
@@ -66,11 +68,22 @@ function useStoryPage(pageSize: number) {
   }, [dispatch, maxItemId]);
 
   React.useEffect(() => {
-    if (canFetch && stories.length < pageSize * (pageNumber + 1)) {
+    if (
+      networkStatus === "online" &&
+      canFetch &&
+      stories.length < pageSize * (pageNumber + 1)
+    ) {
       dispatch(fetchNextStory());
     }
-    // fetch next story if oldestStory id changes
-  }, [dispatch, canFetch, oldestStoryId, pageSize, stories.length, pageNumber]);
+  }, [
+    dispatch,
+    canFetch,
+    oldestStoryId,
+    networkStatus,
+    pageSize,
+    stories.length,
+    pageNumber,
+  ]);
 
   React.useEffect(() => {
     if (scrolledToBottom) {
