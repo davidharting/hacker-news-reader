@@ -31,6 +31,12 @@ export const storiesSlice = createSlice({
     addStory: (state, action: PayloadAction<Story>) => {
       state.stories.push(action.payload);
     },
+    pageForward: (state, action: PayloadAction<number>) => {
+      const status = getCurrentPageStatus(state, action.payload);
+      if (status === "COMPLETE") {
+        state.page = state.page + 1;
+      }
+    },
     setMaxItem: (state, action: PayloadAction<number>) => {
       state.maxItemId = action.payload;
     },
@@ -38,7 +44,7 @@ export const storiesSlice = createSlice({
 });
 
 const { setMaxItem } = storiesSlice.actions;
-export const { addStory } = storiesSlice.actions;
+export const { addStory, pageForward } = storiesSlice.actions;
 export default storiesSlice.reducer;
 
 export function fetchMaxItem(): AppThunk {
@@ -71,14 +77,11 @@ export function fetchNextStory(): AppThunk {
     let attempts: number = 0;
     const MAX_ATTEMPTS = 100000;
 
-    console.log("itemIdToTry", itemIdToTry);
-
     // To avoid infinite looping if something unexpected occurs, cap the number of attempts
     // If we do not find a story after X attempts, simply give up trying
     // In an ideal world, we would alert the user to what happened and have some recovery process
     while (foundStory === false && attempts <= MAX_ATTEMPTS) {
       const response = await getStory(itemIdToTry);
-      console.log(`response ${itemIdToTry}`, response);
       if (response.status === "ok") {
         foundStory = true;
         return dispatch(addStory(response.story));
@@ -89,24 +92,6 @@ export function fetchNextStory(): AppThunk {
 
     console.warn(`Unable to find a story after ${MAX_ATTEMPTS}`);
     return Promise.resolve();
-  };
-}
-
-export function fetchPageOfStories(): AppThunk {
-  return async (dispatch, getState) => {
-    const PAGE_SIZE = 20;
-    const state = getState();
-    if (!selectCanFetch(state)) {
-      console.warn(
-        "Attempted to fetch page of stories without a way to determine item IDs"
-      );
-      return Promise.resolve();
-    }
-    let latest = null;
-    for (let i = 0; i <= PAGE_SIZE; i++) {
-      latest = await dispatch(fetchNextStory());
-    }
-    return latest;
   };
 }
 
@@ -131,3 +116,31 @@ export function selectCanFetch(state: RootState): boolean {
   const stories = selectDescendingStories(state);
   return stories.length > 0 || !!maxItemId;
 }
+
+/**
+ * What "page" of results are we currently on? Starts at 0.
+ */
+export function selectPageNumber(state: RootState): number {
+  return state.stories.page;
+}
+
+export const selectCurrentPageStatus = (pageSize: number) =>
+  function (state: RootState): PageStatus {
+    return getCurrentPageStatus(state.stories, pageSize);
+  };
+
+function getCurrentPageStatus(
+  storiesState: StoriesState,
+  pageSize: number
+): PageStatus {
+  const pageNumber = storiesState.page;
+  const storiesNeeded = (pageNumber + 1) * pageSize;
+  const storiesHad = storiesState.stories.length;
+  return storiesHad < storiesNeeded ? "INCOMPLETE" : "COMPLETE";
+}
+
+interface CurrentPageStatusProps {
+  pageSize: number;
+}
+
+type PageStatus = "INCOMPLETE" | "COMPLETE";
