@@ -92,24 +92,6 @@ export function fetchNextStory(): AppThunk {
   };
 }
 
-export function fetchPageOfStories(): AppThunk {
-  return async (dispatch, getState) => {
-    const PAGE_SIZE = 20;
-    const state = getState();
-    if (!selectCanFetch(state)) {
-      console.warn(
-        "Attempted to fetch page of stories without a way to determine item IDs"
-      );
-      return Promise.resolve();
-    }
-    let latest = null;
-    for (let i = 0; i <= PAGE_SIZE; i++) {
-      latest = await dispatch(fetchNextStory());
-    }
-    return latest;
-  };
-}
-
 export function selectDescendingStories(state: RootState): Story[] {
   return [...state.stories.stories].sort((a, b) => b.id - a.id);
 }
