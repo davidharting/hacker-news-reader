@@ -31,6 +31,12 @@ export const storiesSlice = createSlice({
     addStory: (state, action: PayloadAction<Story>) => {
       state.stories.push(action.payload);
     },
+    pageForward: (state, action: PayloadAction<number>) => {
+      const status = getCurrentPageStatus(state, action.payload);
+      if (status === "COMPLETE") {
+        state.page = state.page + 1;
+      }
+    },
     setMaxItem: (state, action: PayloadAction<number>) => {
       state.maxItemId = action.payload;
     },
@@ -38,7 +44,7 @@ export const storiesSlice = createSlice({
 });
 
 const { setMaxItem } = storiesSlice.actions;
-export const { addStory } = storiesSlice.actions;
+export const { addStory, pageForward } = storiesSlice.actions;
 export default storiesSlice.reducer;
 
 export function fetchMaxItem(): AppThunk {
@@ -110,3 +116,31 @@ export function selectCanFetch(state: RootState): boolean {
   const stories = selectDescendingStories(state);
   return stories.length > 0 || !!maxItemId;
 }
+
+/**
+ * What "page" of results are we currently on? Starts at 0.
+ */
+export function selectPageNumber(state: RootState): number {
+  return state.stories.page;
+}
+
+export const selectCurrentPageStatus = (pageSize: number) =>
+  function (state: RootState): PageStatus {
+    return getCurrentPageStatus(state.stories, pageSize);
+  };
+
+function getCurrentPageStatus(
+  storiesState: StoriesState,
+  pageSize: number
+): PageStatus {
+  const pageNumber = storiesState.page;
+  const storiesNeeded = (pageNumber + 1) * pageSize;
+  const storiesHad = storiesState.stories.length;
+  return storiesHad < storiesNeeded ? "INCOMPLETE" : "COMPLETE";
+}
+
+interface CurrentPageStatusProps {
+  pageSize: number;
+}
+
+type PageStatus = "INCOMPLETE" | "COMPLETE";

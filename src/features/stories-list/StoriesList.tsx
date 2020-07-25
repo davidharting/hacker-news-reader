@@ -1,27 +1,37 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectDescendingStories } from "./storiesSlice";
-import ShowStory from "./components/ShowStory";
+import { useScrolledToBottom } from "browser/window";
 import {
   fetchMaxItem,
   fetchNextStory,
   selectCanFetch,
   selectOldestStoryId,
-} from "features/stories-list/storiesSlice";
+  selectPageNumber,
+  selectDescendingStories,
+  pageForward,
+  selectCurrentPageStatus,
+} from "./storiesSlice";
+import ShowStory from "./components/ShowStory";
 import styles from "./stories-list.module.css";
 
 function StoriesList({ pageSize }: StoriesListProps) {
   const stories = useSelector(selectDescendingStories);
+  // TODO: This hook should simply return the stories
   useStoryPage(pageSize);
 
+  const pageStatus = useSelector(selectCurrentPageStatus(pageSize));
+
   return (
-    <ul className={styles.list}>
-      {stories.map((s) => (
-        <li className={styles.listItem} key={s.id}>
-          <ShowStory story={s} />
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul className={styles.list}>
+        {stories.map((s) => (
+          <li className={styles.listItem} key={s.id}>
+            <ShowStory story={s} />
+          </li>
+        ))}
+      </ul>
+      {pageStatus === "INCOMPLETE" && <p>loading ...</p>}
+    </>
   );
 }
 
@@ -36,15 +46,24 @@ function useStoryPage(pageSize: number) {
   const stories = useSelector(selectDescendingStories);
   const canFetch = useSelector(selectCanFetch);
   const oldestStoryId = useSelector(selectOldestStoryId);
+  const pageNumber = useSelector(selectPageNumber);
+
+  const scrolledToBottom = useScrolledToBottom();
 
   React.useEffect(() => {
     dispatch(fetchMaxItem());
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (canFetch && stories.length < pageSize) {
+    if (canFetch && stories.length < pageSize * (pageNumber + 1)) {
       dispatch(fetchNextStory());
     }
     // fetch next story if oldestStory id changes
-  }, [dispatch, canFetch, oldestStoryId, pageSize, stories.length]);
+  }, [dispatch, canFetch, oldestStoryId, pageSize, stories.length, pageNumber]);
+
+  React.useEffect(() => {
+    if (scrolledToBottom) {
+      dispatch(pageForward(pageSize));
+    }
+  }, [dispatch, pageSize, scrolledToBottom, stories.length]);
 }
