@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectDescendingStories, selectMaxItemId } from "./storiesSlice";
+import { selectDescendingStories } from "./storiesSlice";
 import ShowStory from "./components/ShowStory";
 import {
   fetchMaxItem,
