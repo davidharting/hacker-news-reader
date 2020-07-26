@@ -1,4 +1,8 @@
-import { selectDescendingStories, selectOldestStoryId } from "../storiesSlice";
+import {
+  selectDescendingStories,
+  selectOldestStoryId,
+  selectCurrentPageStatus,
+} from "../storiesSlice";
 import { Story } from "models/story";
 
 describe("#selectDescendingStories", () => {
@@ -22,10 +26,22 @@ describe("#selectOldestStoryId", () => {
   });
 });
 
-function makeState(stories: Story[]) {
+describe("#selectCurrentPageStatus", () => {
+  it('should return "COMPLETE" when the current page is full', () => {
+    const state = makeState(STORIES);
+    expect(selectCurrentPageStatus(STORIES.length)(state)).toBe("COMPLETE");
+  });
+
+  it('should return "INCOMPLETE" when the current page is not full', () => {
+    const state = makeState(STORIES, 1);
+    expect(selectCurrentPageStatus(3)(state)).toBe("INCOMPLETE");
+  });
+});
+
+function makeState(stories: Story[], page = 0) {
   return {
     counter: { value: 0 },
-    stories: { maxItemId: null, page: 0, stories },
+    stories: { maxItemId: null, page, stories },
   };
 }
 

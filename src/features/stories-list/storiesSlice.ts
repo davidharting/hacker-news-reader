@@ -152,8 +152,4 @@ function getCurrentPageStatus(
   return storiesHad < storiesNeeded ? "INCOMPLETE" : "COMPLETE";
 }
 
-interface CurrentPageStatusProps {
-  pageSize: number;
-}
-
 type PageStatus = "INCOMPLETE" | "COMPLETE";
