@@ -17,3 +17,8 @@ test("getStory should return the story when one is found", async () => {
   }
   expect(response.story.title).toContain("Escalation by Tweet");
 });
+
+test("getStory should return wrong_type when it finds a comment", async () => {
+  const response = await getStory(4342);
+  expect(response.status).toBe("wrong_type");
+});
