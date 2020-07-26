@@ -15,33 +15,35 @@ Circle CI provides continuous integration, running linter, typechecking, and jes
 
 ### Run the project locally
 
+I built this project using Node.js 12.16.3, but it should work with Node.js 10+.
+
 ```bash
 git clone https://github.com/davidharting/hacker-news-reader.git
 cd hacker-news-reader
-yarn && yarn start
+npm install && npm start
 ```
 
-#### Run tests
+### Run tests
 
 ```bash
-yarn test # watch mode
-yarn test:ci # run tests serially and exit
+npm run test # watch mode
+npm run test:ci # run tests serially and exit
 ```
 
 ### Lint
 
 ```bash
-yarn lint
+npm run lint
 ```
 
 ### Type check
 
 ```bash
-yarn tsc
+npm run tsc
 ```
 
 ### Create a production build
 
 ```
-yarn build
+npm run build
 ```

@@ -9,19 +9,19 @@ jobs:
       - checkout
       - node/with-cache:
           steps:
-            - run: yarn install
+            - run: npm install
             - run:
                 name: lint
-                command: yarn lint
+                command: npm run lint
             - run:
                 name: type check
-                command: yarn tsc
+                command: npm run tsc
             - run:
                 name: unit test
-                command: yarn test:ci
+                command: npm run test:ci
             - run:
                 name: build
-                command: yarn build
+                command: npm run build
 workflows:
   build-and-test:
     jobs:
