@@ -47,7 +47,9 @@ interface StoriesListProps {
 }
 
 /**
- * This hook is responsible for
+ * This hook is responsible for fetching an infinitely scrolling feed of hacker news stories.
+ * It achieves this by first finding the current maximum HN item ID, and then walking backwards through items to fill up a "page."
+ * When the user scrolls to the bottom of the feed, the next page will be fetched if the current page is complete.
  * @param pageSize
  */
 function useInfiniteScrollStories(pageSize: number) {
