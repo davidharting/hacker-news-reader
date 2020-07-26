@@ -8,7 +8,6 @@ import {
   fetchNextStory,
   selectCanFetch,
   selectOldestStoryId,
-  selectPageNumber,
   selectDescendingStories,
   pageForward,
   selectCurrentPageStatus,
@@ -19,10 +18,7 @@ import Refresh from "./components/Refresh";
 import styles from "./stories-list.module.css";
 
 function StoriesList({ pageSize }: StoriesListProps) {
-  const stories = useSelector(selectDescendingStories);
-  // TODO: This hook should simply return the stories
-  useStoryPage(pageSize);
-
+  const stories = useInfiniteScrollStories(pageSize);
   const pageStatus = useSelector(selectCurrentPageStatus(pageSize));
 
   return (
@@ -50,44 +46,44 @@ interface StoriesListProps {
   pageSize: number;
 }
 
-function useStoryPage(pageSize: number) {
+/**
+ * This hook is responsible for
+ * @param pageSize
+ */
+function useInfiniteScrollStories(pageSize: number) {
+  useMaxItemId();
   const dispatch = useDispatch();
+
   const stories = useSelector(selectDescendingStories);
   const canFetch = useSelector(selectCanFetch);
+  const pageStatus = useSelector(selectCurrentPageStatus(pageSize));
   const oldestStoryId = useSelector(selectOldestStoryId);
-  const maxItemId = useSelector(selectMaxItemId);
-  const pageNumber = useSelector(selectPageNumber);
 
   const networkStatus = useNetworkStatus();
   const scrolledToBottom = useScrolledToBottom();
 
   React.useEffect(() => {
-    if (!maxItemId) {
-      dispatch(fetchMaxItem());
-    }
-  }, [dispatch, maxItemId]);
-
-  React.useEffect(() => {
-    if (
-      networkStatus === "online" &&
-      canFetch &&
-      stories.length < pageSize * (pageNumber + 1)
-    ) {
+    if (networkStatus === "online" && canFetch && pageStatus === "INCOMPLETE") {
       dispatch(fetchNextStory());
     }
-  }, [
-    dispatch,
-    canFetch,
-    oldestStoryId,
-    networkStatus,
-    pageSize,
-    stories.length,
-    pageNumber,
-  ]);
+  }, [dispatch, canFetch, oldestStoryId, networkStatus, pageStatus]);
 
   React.useEffect(() => {
     if (scrolledToBottom) {
       dispatch(pageForward(pageSize));
     }
   }, [dispatch, pageSize, scrolledToBottom, stories.length]);
+
+  return stories;
+}
+
+function useMaxItemId() {
+  const dispatch = useDispatch();
+  const maxItemId = useSelector(selectMaxItemId);
+
+  React.useEffect(() => {
+    if (!maxItemId) {
+      dispatch(fetchMaxItem());
+    }
+  }, [dispatch, maxItemId]);
 }

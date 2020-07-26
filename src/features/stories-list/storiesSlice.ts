@@ -120,6 +120,10 @@ export function selectMaxItemId(state: RootState): number | null {
   return state.stories.maxItemId;
 }
 
+/**
+ * @param state
+ * @return true if we have enough information to know what item ID to fetch next
+ */
 export function selectCanFetch(state: RootState): boolean {
   const maxItemId = selectMaxItemId(state);
   const stories = selectDescendingStories(state);
