@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNetworkStatus } from "browser/network";
 import { useScrolledToBottom } from "browser/window";
-import Spinner from "elements/spinner";
+import Spinner from "elements/spinner/index";
 import {
   fetchMaxItem,
   fetchNextStory,
