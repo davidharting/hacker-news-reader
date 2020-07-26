@@ -5,7 +5,6 @@ export function useScrolledToBottom(): boolean {
 
   React.useEffect(() => {
     const onScroll = () => {
-      console.log("scrolling");
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         setScrolledToBottom(true);
       } else {
