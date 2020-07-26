@@ -2,3 +2,9 @@
   padding: 0.25rem;
   margin-bottom: 1rem;
 }
+
+@media only screen and (max-width: 640px) {
+  .button {
+    font-size: 1.25rem;
+  }
+}
