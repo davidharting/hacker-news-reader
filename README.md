@@ -26,7 +26,7 @@ npm install && npm start
 ### Run tests
 
 ```bash
-npm run test # watch mode
+npm test # watch mode
 npm run test:ci # run tests serially and exit
 ```
 
