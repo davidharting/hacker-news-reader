@@ -82,7 +82,7 @@ function useInfiniteScrollStories(pageSize: number) {
     dispatch,
     pageSize,
     scrolledToBottom,
-    stories.length, // If the user is already at the bottom of the page when the last story comes in, we want to start fetching the next page
+    stories.length, // If the user is already at the bottom of the page when the last story of the current page comes in, we want to start fetching the next page
   ]);
 
   return stories;
