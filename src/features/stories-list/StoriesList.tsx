@@ -66,13 +66,24 @@ function useInfiniteScrollStories(pageSize: number) {
     if (networkStatus === "online" && canFetch && pageStatus === "INCOMPLETE") {
       dispatch(fetchNextStory());
     }
-  }, [dispatch, canFetch, oldestStoryId, networkStatus, pageStatus]);
+  }, [
+    dispatch,
+    canFetch,
+    oldestStoryId, // We know we are ready to fetch a new story when the oldest known story ID changes
+    networkStatus,
+    pageStatus,
+  ]);
 
   React.useEffect(() => {
     if (scrolledToBottom) {
       dispatch(pageForward(pageSize));
     }
-  }, [dispatch, pageSize, scrolledToBottom, stories.length]);
+  }, [
+    dispatch,
+    pageSize,
+    scrolledToBottom,
+    stories.length, // If the user is already at the bottom of the page when the last story comes in, we want to start fetching the next page
+  ]);
 
   return stories;
 }
